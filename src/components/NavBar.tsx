@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { LogIn, LogOut, LayoutDashboard, Bot } from "lucide-react";
+import { LogIn, LogOut, LayoutDashboard, Bot ,Table } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -54,6 +54,15 @@ const NavBar = () => {
           <span className="hidden md:inline">Bot Control Room</span>
         </Link>
         <div className="flex gap-2">
+        <Button
+            onClick={() => navigate("/details")}
+            variant="secondary"
+            className="flex items-center gap-2"
+          >
+            <Table className="h-4 w-4" />
+            <span className="hidden md:inline">Details</span>
+            
+          </Button>
           {isAuthenticated ? (
             <>
               <Button

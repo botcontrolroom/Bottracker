@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import MemberDashboard from "./pages/MemberDashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Details from "./pages/Details";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/details" element={<Details />} />
           <Route 
             path="/member-dashboard" 
             element={

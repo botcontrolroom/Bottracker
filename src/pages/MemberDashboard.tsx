@@ -8,8 +8,9 @@ import { BotDetails } from "@/types/dashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { LogOut, Bot, House ,Search } from "lucide-react";
+import { LogOut, Bot, House ,Search , Table } from "lucide-react";
 import { Input } from "@/components/ui/input";
+
 const MemberDashboard = () => {
   const [bots, setBots] = useState<BotDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -102,6 +103,15 @@ const MemberDashboard = () => {
             </h1>
             </Link>
             <div className="flex items-center gap-3">
+            <Button
+            onClick={() => navigate("/details")}
+            variant="secondary"
+            className="flex items-center gap-2"
+          >
+            <Table className="h-4 w-4" />
+            <span className="hidden md:inline">Details</span>
+            
+          </Button>
             <Button
                 onClick={() => navigate("/")}
                 variant="outline"
