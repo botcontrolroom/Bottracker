@@ -1,11 +1,12 @@
 /* eslint-disable prefer-const */
 
 import { useEffect, useState } from "react";
-import { Bot, Clock, Monitor, Calendar, ChevronRight } from "lucide-react";
+import { Bot, Clock, Monitor, Calendar, ChevronRight ,Search } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 interface TimelineBot {
   id: string;
@@ -24,6 +25,7 @@ const Timeline = () => {
   const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [expandedBot, setExpandedBot] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -135,7 +137,16 @@ const Timeline = () => {
            currentMinutes <= endTimeMinutes;
   };
 
-  const sortedBots = [...bots].sort((a, b) => {
+  const filteredBots = bots.filter(bot => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      bot.name.toLowerCase().includes(searchLower) ||
+      (bot.machine_name && bot.machine_name.toLowerCase().includes(searchLower)) ||
+      (bot.platform && bot.platform.toLowerCase().includes(searchLower))
+    );
+  });
+
+  const sortedBots = [...filteredBots].sort((a, b) => {
     const aActive = isActive(a);
     const bActive = isActive(b);
     if (aActive && !bActive) return -1;
@@ -143,7 +154,7 @@ const Timeline = () => {
     return 0;
   });
 
-  const filteredBots = showOnlyActive 
+  const finalBots = showOnlyActive
     ? sortedBots.filter(bot => isActive(bot))
     : sortedBots;
 
@@ -182,14 +193,24 @@ const Timeline = () => {
           </div>
         </div>
       </div>
+      <div className="mb-4 relative">
+        <Input
+          type="text"
+          placeholder="Search bots by name, machine or platform..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+      </div>
       <div className="timeline-grid bg-white rounded-lg p-2 sm:p-4 border border-slate-200">
         <div className="timeline-content">
-          {filteredBots.length === 0 ? (
+        {finalBots.length === 0 ? (
             <div className="p-4 text-center text-muted-foreground">
-              No bots found. Add some bots to get started.
+               {searchTerm ? "No bots found matching your search." : "No bots found. Add some bots to get started."}
             </div>
           ) : (
-            filteredBots.map((bot) => (
+            finalBots.map((bot) => (
               <div
                 key={bot.id}
                 className={`bot-row p-3 sm:p-4 border-b border-gray-100 transition-colors ${

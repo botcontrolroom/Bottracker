@@ -8,12 +8,13 @@ import { BotDetails } from "@/types/dashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { LogOut, Bot, House } from "lucide-react";
-
+import { LogOut, Bot, House ,Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 const MemberDashboard = () => {
   const [bots, setBots] = useState<BotDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [username, setUsername] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -78,6 +79,17 @@ const MemberDashboard = () => {
     }
   };
 
+    // Filter bots based on search term
+    const filteredBots = bots.filter(bot => {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        bot.name.toLowerCase().includes(searchLower) ||
+        bot.machineName.toLowerCase().includes(searchLower) ||
+        (bot.platform && bot.platform.toLowerCase().includes(searchLower))
+      );
+    });
+  
+  
   return (
     <div className="min-h-screen bg-[#e5e7eb70]">
       <nav className="glass fixed top-0 w-full z-50">
@@ -118,13 +130,23 @@ const MemberDashboard = () => {
           </h2>
           <div className="h-1 w-20 bg-gradient-to-r from-slate-800 to-slate-400 mt-2 rounded-full"></div>
         </div>
+        <div className="mb-4 relative">
+          <Input
+            type="text"
+            placeholder="Search bots by name, machine or platform..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        </div>
 
         {isLoading ? (
           <div className="bg-white rounded-lg p-8 text-center border border-slate-200">
             <div className="text-lg text-slate-600 justify-center"><img src="/6.svg"></img></div>
           </div>
         ) : (
-          <BotManagement bots={bots} setBots={setBots} />
+           <BotManagement bots={filteredBots} setBots={setBots} />
         )}
       </div>
     </div>
